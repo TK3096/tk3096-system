@@ -28,9 +28,7 @@ export default function RootLayout({
           defaultTheme='dark'
           storageKey='tk3096-system'
         >
-          <div className='h-full'>
-            <main className='h-full'>{children}</main>
-          </div>
+          {children}
           <ToasterProvider />
         </ThemeProvider>
       </body>

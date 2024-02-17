@@ -6,7 +6,7 @@ import { SESSION_KEY } from '@/lib/constant'
 
 import { APIResponse } from '@/types'
 
-export const GET = async () => {
+export const POST = async () => {
   try {
     const sessionCookie = cookies().get(SESSION_KEY)?.value
 

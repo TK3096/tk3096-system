@@ -49,13 +49,13 @@ export const LoginForm = () => {
         toast({
           title: 'Sign in',
           description: 'Successfully to sign in',
-          variant: 'destructive',
         })
         router.push('/')
       } else {
         toast({
           title: 'Sign in',
           description: 'Fail to sign in',
+          variant: 'destructive',
         })
       }
     } catch (error) {
