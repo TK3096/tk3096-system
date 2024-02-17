@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation'
 
 import { loginSchema } from '@/schemas/auth'
 
+import { useToast } from '@/hooks/useToast'
+
 import {
   Form,
   FormControl,
@@ -19,8 +21,12 @@ import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
+import { signIn } from '@/lib/firebase/client/auth'
+
 export const LoginForm = () => {
   const router = useRouter()
+
+  const { toast } = useToast()
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -33,8 +39,32 @@ export const LoginForm = () => {
   const loading = form.formState.isSubmitting
   const isDirty = form.formState.isDirty
 
-  const handleSubmitLogin = (values: z.infer<typeof loginSchema>) => {
-    console.log(values)
+  const handleSubmitLogin = async (values: z.infer<typeof loginSchema>) => {
+    try {
+      const { email, password } = values
+
+      const res = await signIn(email, password)
+
+      if (res) {
+        toast({
+          title: 'Sign in',
+          description: 'Successfully to sign in',
+          variant: 'destructive',
+        })
+        router.push('/')
+      } else {
+        toast({
+          title: 'Sign in',
+          description: 'Fail to sign in',
+        })
+      }
+    } catch (error) {
+      toast({
+        title: 'Something went wrong',
+        description: 'Internal error',
+        variant: 'destructive',
+      })
+    }
   }
 
   return (

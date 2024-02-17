@@ -1,1 +1,1 @@
-export const SESSION_KEY = 'tk3096-system'
+export const SESSION_KEY = process.env.SESSION_KEY as string

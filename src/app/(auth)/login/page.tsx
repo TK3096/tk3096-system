@@ -1,6 +1,16 @@
+import { redirect } from 'next/navigation'
+
 import { LoginForm } from '@/components/auth/LoginForm'
 
-const LoginPage = () => {
+import { getCurrentUser } from '@/lib/firebase/server/auth'
+
+const LoginPage = async () => {
+  const user = await getCurrentUser()
+
+  if (user) {
+    redirect('/')
+  }
+
   return (
     <div className='h-full flex justify-center items-center'>
       <LoginForm />

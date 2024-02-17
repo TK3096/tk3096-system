@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 
 import { ThemeProvider } from '@/providers/ThemeProvider'
+import { ToasterProvider } from '@/providers/ToasterProvider'
 
 import { cn } from '@/lib/utils'
 
@@ -30,6 +31,7 @@ export default function RootLayout({
           <div className='h-full'>
             <main className='h-full'>{children}</main>
           </div>
+          <ToasterProvider />
         </ThemeProvider>
       </body>
     </html>
