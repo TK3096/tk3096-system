@@ -3,6 +3,7 @@ import { Open_Sans } from 'next/font/google'
 
 import { ThemeProvider } from '@/providers/ThemeProvider'
 import { ToasterProvider } from '@/providers/ToasterProvider'
+import { ModalProvider } from '@/providers/ModalProvider'
 
 import { cn } from '@/lib/utils'
 
@@ -29,6 +30,7 @@ export default function RootLayout({
           storageKey='tk3096-system'
         >
           {children}
+          <ModalProvider />
           <ToasterProvider />
         </ThemeProvider>
       </body>

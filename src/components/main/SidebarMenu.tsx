@@ -12,26 +12,6 @@ const MENUS = [
     path: '/tasks-management',
     Icon: LayoutList,
   },
-  {
-    title: 'Tasks Management2',
-    path: '/tasks-management',
-    Icon: LayoutList,
-  },
-  {
-    title: 'Tasks Management3',
-    path: '/tasks-management',
-    Icon: LayoutList,
-  },
-  {
-    title: 'Tasks Management4',
-    path: '/tasks-management',
-    Icon: LayoutList,
-  },
-  {
-    title: 'Tasks Management5',
-    path: '/tasks-management',
-    Icon: LayoutList,
-  },
 ]
 
 export const SidebarMenu = () => {
