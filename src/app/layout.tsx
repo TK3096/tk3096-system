@@ -27,7 +27,9 @@ export default function RootLayout({
           defaultTheme='dark'
           storageKey='tk3096-system'
         >
-          {children}
+          <div className='h-full'>
+            <main className='h-full'>{children}</main>
+          </div>
         </ThemeProvider>
       </body>
     </html>
