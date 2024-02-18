@@ -3,8 +3,12 @@
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+
+import { APIResponse } from '@/types'
 
 import { useModal } from '@/hooks/useModal'
+import { useToast } from '@/hooks/useToast'
 
 import { workspaceSchema } from '@/schemas/tasks-management'
 
@@ -29,7 +33,10 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 export const CreateWorkspaceModal = () => {
+  const router = useRouter()
+
   const { type, open, onClose } = useModal()
+  const { toast } = useToast()
 
   const form = useForm({
     resolver: zodResolver(workspaceSchema),
@@ -46,8 +53,40 @@ export const CreateWorkspaceModal = () => {
   const handleSubmitCreate = async (
     values: z.infer<typeof workspaceSchema>,
   ) => {
-    console.log(values)
-    handleClose()
+    try {
+      const res = await fetch('/api/tasks-management/workspace', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
+
+      const resBody = (await res.json()) as APIResponse<{ id: string }>
+
+      if (res.ok && resBody.status) {
+        handleClose()
+        toast({
+          title: 'Create workspace',
+          description: 'Successfully to create workspace',
+        })
+        router.refresh()
+      } else {
+        toast({
+          title: 'Create workspace',
+          description: !resBody.status
+            ? resBody.error
+            : 'Fail to create workspace',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      toast({
+        title: 'Something went wrong',
+        description: 'Internal error',
+        variant: 'destructive',
+      })
+    }
   }
 
   const handleClose = () => {
