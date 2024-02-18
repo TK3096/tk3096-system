@@ -54,10 +54,13 @@ export const PATCH = async (
       )
     }
 
-    return NextResponse.json<APIResponse<boolean>>({
-      status: true,
-      data: updated,
-    })
+    return NextResponse.json<APIResponse<boolean>>(
+      {
+        status: true,
+        data: updated,
+      },
+      { status: 200 },
+    )
   } catch (error) {
     return NextResponse.json<APIResponse>(
       {

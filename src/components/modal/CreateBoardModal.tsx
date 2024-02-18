@@ -66,7 +66,41 @@ export const CreateBoardModal = () => {
   const handleSubmitCreate = async (
     values: z.infer<typeof createBoardSchema>,
   ) => {
-    console.log(values)
+    try {
+      const res = await fetch('/api/tasks-management/board', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
+
+      const resBody = (await res.json()) as APIResponse<{ id: string }>
+
+      if (res.ok && resBody.status) {
+        toast({
+          title: 'Create board',
+          description: 'Successfully to create board',
+        })
+
+        onClose()
+        router.push(
+          `/tasks-management/${values.workspaceId}/${resBody.data.id}`,
+        )
+      } else {
+        toast({
+          title: 'Create board',
+          description: !resBody.status ? resBody.error : 'Fail to create board',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      toast({
+        title: 'Something went wrong',
+        description: 'Internal error',
+        variant: 'destructive',
+      })
+    }
   }
 
   const handleClose = () => {
