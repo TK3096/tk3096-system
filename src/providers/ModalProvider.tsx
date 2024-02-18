@@ -6,6 +6,7 @@ import { CreateWorkspaceModal } from '@/components/modal/CreateWorkspaceModal'
 import { EditWorkspaceModal } from '@/components/modal/EditWorkspaceModal'
 import { CreateBoardModal } from '@/components/modal/CreateBoardModal'
 import { EditBoardModal } from '@/components/modal/EditBoardModal'
+import { CreateTaskModal } from '@/components/modal/CreateTaskModal'
 
 export const ModalProvider = () => {
   const [mounted, setMounted] = useState(false)
@@ -24,6 +25,7 @@ export const ModalProvider = () => {
       <EditWorkspaceModal />
       <CreateBoardModal />
       <EditBoardModal />
+      <CreateTaskModal />
     </>
   )
 }

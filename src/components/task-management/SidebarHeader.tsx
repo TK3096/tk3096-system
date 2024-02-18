@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, ChevronDown, LayoutDashboard, FileText } from 'lucide-react'
+import { Archive, ChevronDown, LayoutDashboard } from 'lucide-react'
 
 import { useModal } from '@/hooks/useModal'
 
@@ -36,10 +36,6 @@ export const SidebarHeader = () => {
         >
           Create Board
           <LayoutDashboard className='h-5 w-5 ml-auto' />
-        </DropdownMenuItem>
-        <DropdownMenuItem className='cursor-pointer px-3 py-2'>
-          Create Task
-          <FileText className='h-5 w-5 ml-auto' />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

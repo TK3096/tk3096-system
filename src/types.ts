@@ -22,3 +22,21 @@ export interface Board {
   createdAt: number
   updatedAt: number
 }
+
+export enum TaskStatus {
+  TODO = 'todo',
+  IN_PROGRESS = 'in-progress',
+  REVIEW = 'review',
+  DONE = 'done',
+}
+
+export interface Task {
+  id: string
+  bordId: string
+  name: string
+  description: string
+  status: TaskStatus
+  refs: string[]
+  createdAt: number
+  updatedAt: number
+}

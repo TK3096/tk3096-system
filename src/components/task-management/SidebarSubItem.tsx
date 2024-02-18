@@ -1,6 +1,6 @@
 'use client'
 
-import { Plus, Edit } from 'lucide-react'
+import { Edit } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import { Board } from '@/types'
@@ -26,12 +26,6 @@ export const SidebarSubItem = (props: SidebarSubItemProps) => {
     onOpen('editBoard', { board })
   }
 
-  const handleAddTask = (e: React.MouseEvent) => {
-    e.stopPropagation()
-
-    console.log('task')
-  }
-
   const handleClick = () => {
     router.push(`/tasks-management/${board.workspaceId}/${board.id}`)
   }
@@ -43,9 +37,6 @@ export const SidebarSubItem = (props: SidebarSubItemProps) => {
     >
       <p className='text-sm'>{board.name}</p>
       <div className='ml-auto flex gap-1'>
-        <AcctionTooltip label='add task' side='top' align='center'>
-          <Plus className='h-4 w-4' onClick={handleAddTask} />
-        </AcctionTooltip>
         <AcctionTooltip label='edit board' side='top' align='center'>
           <Edit className='h-4 w-4' onClick={handleEdit} />
         </AcctionTooltip>

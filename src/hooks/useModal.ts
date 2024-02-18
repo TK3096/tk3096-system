@@ -1,16 +1,19 @@
 import { create } from 'zustand'
 
-import { Workspace, Board } from '@/types'
+import { Workspace, Board, Task } from '@/types'
 
 export type ModalType =
   | 'createWorkspace'
   | 'editWorkspace'
   | 'createBoard'
   | 'editBoard'
+  | 'createTask'
+  | 'editTask'
 
 export interface ModalData {
   workspace?: Workspace
   board?: Board
+  task?: Task
 }
 
 interface ModalStore {
