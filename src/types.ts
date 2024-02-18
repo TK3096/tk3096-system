@@ -9,3 +9,12 @@ export interface Workspace {
   createdAt: number
   updatedAt: number
 }
+
+export interface Board {
+  id: string
+  workspaceId: string
+  name: string
+  description: string
+  createdAt: number
+  updatedAt: number
+}

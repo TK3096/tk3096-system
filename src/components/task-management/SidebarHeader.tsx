@@ -30,7 +30,10 @@ export const SidebarHeader = () => {
           Create Workspace
           <Archive className='h-5 w-5 ml-auto' />
         </DropdownMenuItem>
-        <DropdownMenuItem className='cursor-pointer px-3 py-2 dark:text-rose-400 dark:hover:text-rose-400/80'>
+        <DropdownMenuItem
+          className='cursor-pointer px-3 py-2 dark:text-rose-400 dark:hover:text-rose-400/80'
+          onClick={() => onOpen('createBoard')}
+        >
           Create Board
           <LayoutDashboard className='h-5 w-5 ml-auto' />
         </DropdownMenuItem>
