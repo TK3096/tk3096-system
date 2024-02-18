@@ -19,7 +19,7 @@ export const ContentHeader = (props: ContentHeaderProps) => {
   const { onOpen } = useModal()
 
   return (
-    <div className='flex gap-2 items-center dark:bg-neutral-900/60 px-4 py-3 h-12 shadow-lg'>
+    <div className='flex gap-2 items-center dark:bg-zinc-800 px-4 py-3 h-12 shadow-lg'>
       <Hash />
       <h3 className='font-bold text-md'>
         {workspace.name} / {board.name}

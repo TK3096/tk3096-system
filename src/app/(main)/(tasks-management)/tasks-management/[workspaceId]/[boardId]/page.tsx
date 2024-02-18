@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 
-import { Board, Workspace } from '@/types'
+import { Board, Task, Workspace } from '@/types'
 
 import { ContentHeader } from '@/components/task-management/ContentHeader'
-import { getBoards, getWorkspaces } from '@/lib/firebase/client/db'
+import { getBoards, getTasks, getWorkspaces } from '@/lib/firebase/client/db'
+import { TaskCard } from '@/components/task-management/board/TaskCard'
 
 const BoardPage = () => {
   const params = useParams()
@@ -14,6 +15,7 @@ const BoardPage = () => {
 
   const [workspace, setWorkspace] = useState<Workspace | null>(null)
   const [board, setBoard] = useState<Board | null>(null)
+  const [tasks, setTasks] = useState<Task[]>([])
 
   useEffect(() => {
     const { unsubscribe } = getWorkspaces((value: Workspace) => {
@@ -28,14 +30,31 @@ const BoardPage = () => {
   }, [workspaceId])
 
   useEffect(() => {
-    const { unsubscribe } = getBoards((value: Board) => {
+    const { unsubscribe: unsubBoard } = getBoards((value: Board) => {
       if (boardId === value.id) {
         setBoard(value)
       }
     })
 
+    const { unsubscribe: unsubTask } = getTasks((value: Task) => {
+      if (value.boardId === boardId) {
+        setTasks((prev) => {
+          const index = prev.findIndex((task) => task.id === value.id)
+
+          if (index !== -1) {
+            const newTasks = [...prev]
+            newTasks[index] = value
+            return newTasks
+          }
+
+          return [...prev, value]
+        })
+      }
+    })
+
     return () => {
-      unsubscribe()
+      unsubBoard()
+      unsubTask()
     }
   }, [boardId])
 
@@ -48,8 +67,12 @@ const BoardPage = () => {
       <div className='fixed w-full'>
         <ContentHeader workspace={workspace} board={board} />
       </div>
-      <div className='pt-16 px-4'>
-        <div>w</div>
+      <div className='pt-16 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 '>
+        {tasks.map((task) => (
+          <div key={task.id}>
+            <TaskCard task={task} board={board} />
+          </div>
+        ))}
       </div>
     </div>
   )

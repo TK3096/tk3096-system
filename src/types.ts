@@ -32,11 +32,11 @@ export enum TaskStatus {
 
 export interface Task {
   id: string
-  bordId: string
+  boardId: string
   name: string
   description: string
   status: TaskStatus
-  refs: string[]
+  remarks: string[]
   createdAt: number
   updatedAt: number
 }

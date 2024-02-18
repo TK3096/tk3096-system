@@ -1,10 +1,14 @@
 import { onSnapshot, collection, query } from 'firebase/firestore'
 
-import { Board, Workspace } from '@/types'
+import { Board, Task, Workspace } from '@/types'
 
 import { db } from '@/lib/firebase/client/config'
 
-import { BOARDS_COLLECTION, WORKSPACES_COLLECTION } from '@/lib/constant'
+import {
+  BOARDS_COLLECTION,
+  TASKS_COLLECTION,
+  WORKSPACES_COLLECTION,
+} from '@/lib/constant'
 
 export const getWorkspaces = (cb: (value: Workspace) => void) => {
   const q = query(collection(db, WORKSPACES_COLLECTION))
@@ -39,6 +43,38 @@ export const getBoards = (cb: (value: Board) => void) => {
         name,
         description,
         workspaceId,
+        createdAt,
+        updatedAt,
+      }
+
+      cb(transformedData)
+    })
+  })
+
+  return { unsubscribe }
+}
+
+export const getTasks = (cb: (value: Task) => void) => {
+  const q = query(collection(db, TASKS_COLLECTION))
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    snapshot.forEach((doc) => {
+      const {
+        name,
+        description,
+        boardId,
+        status,
+        remarks,
+        createdAt,
+        updatedAt,
+      } = doc.data()
+
+      const transformedData: Task = {
+        id: doc.id,
+        boardId,
+        name,
+        description,
+        status,
+        remarks,
         createdAt,
         updatedAt,
       }

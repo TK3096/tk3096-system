@@ -36,3 +36,16 @@ export const createTaskSchema = z.object({
   ]),
   remarks: z.array(z.string()),
 })
+
+export const editTaskSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  description: z.string().min(1, 'Description is required'),
+  boardId: z.string().min(1, 'Board id is required'),
+  status: z.enum([
+    TaskStatus.TODO,
+    TaskStatus.IN_PROGRESS,
+    TaskStatus.REVIEW,
+    TaskStatus.DONE,
+  ]),
+  remarks: z.array(z.string()),
+})
