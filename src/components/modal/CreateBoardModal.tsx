@@ -55,7 +55,7 @@ export const CreateBoardModal = () => {
     defaultValues: {
       name: '',
       description: '',
-      workspaceId: data?.workspace?.id || '',
+      workspaceId: '',
     },
   })
 
@@ -130,6 +130,12 @@ export const CreateBoardModal = () => {
       unsubscribe()
     }
   }, [])
+
+  useEffect(() => {
+    if (data?.workspace) {
+      form.setValue('workspaceId', data.workspace.id)
+    }
+  }, [form, data])
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>

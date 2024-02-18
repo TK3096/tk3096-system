@@ -1,29 +1,30 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import qs from 'query-string'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 
-import { APIResponse } from '@/types'
+import { APIResponse, Workspace } from '@/types'
 
 import { useModal } from '@/hooks/useModal'
 import { useToast } from '@/hooks/useToast'
 
-import { editWorkspaceSchema } from '@/schemas/tasks-management'
+import { editBoardSchema } from '@/schemas/tasks-management'
 
 import {
   Dialog,
-  DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogFooter,
-  DialogDescription,
   DialogTitle,
+  DialogContent,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Form,
   FormMessage,
@@ -32,32 +33,59 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form'
-import { Textarea } from '@/components/ui/textarea'
+import {
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  Select,
+} from '@/components/ui/select'
 
-export const EditWorkspaceModal = () => {
+import { getWorkspaces } from '@/lib/firebase/client/db'
+
+export const EditBoardModal = () => {
   const router = useRouter()
 
-  const { type, open, onClose, data } = useModal()
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+
+  const { open, type, onClose, data } = useModal()
   const { toast } = useToast()
 
   const form = useForm({
-    resolver: zodResolver(editWorkspaceSchema),
+    resolver: zodResolver(editBoardSchema),
     defaultValues: {
       name: '',
       description: '',
+      workspaceId: '',
     },
   })
 
-  const isOpen = open && type === 'editWorkspace'
+  const isOpen = open && type === 'editBoard'
   const loading = form.formState.isSubmitting
   const isDirty = form.formState.isDirty
 
-  const handleSubmitEdit = async (
-    values: z.infer<typeof editWorkspaceSchema>,
-  ) => {
+  const handleGetWorkspaces = (workspace: Workspace) => {
+    setWorkspaces((prev) => {
+      const index = prev.findIndex((w) => w.id === workspace.id)
+
+      if (index !== -1) {
+        const temp = [...prev]
+        temp[index] = workspace
+
+        return temp
+      }
+
+      return [...prev, workspace]
+    })
+  }
+
+  const handleSubmitEdit = async (values: z.infer<typeof editBoardSchema>) => {
     try {
       const url = qs.stringifyUrl({
-        url: `/api/tasks-management/workspace/${data?.workspace?.id}`,
+        url: `/api/tasks-management/board/${data?.board?.id}`,
+        query: {
+          workspaceId: values.workspaceId,
+        },
       })
       const res = await fetch(url, {
         method: 'PATCH',
@@ -72,16 +100,14 @@ export const EditWorkspaceModal = () => {
       if (res.ok && resBody.status) {
         handleClose()
         toast({
-          title: 'Update workspace',
-          description: 'Successfully to update workspace',
+          title: 'Update board',
+          description: 'Successfully to update board',
         })
         router.refresh()
       } else {
         toast({
-          title: 'Update workspace',
-          description: !resBody.status
-            ? resBody.error
-            : 'Fail to update workspace',
+          title: 'Update board',
+          description: !resBody.status ? resBody.error : 'Fail to update board',
           variant: 'destructive',
         })
       }
@@ -100,9 +126,18 @@ export const EditWorkspaceModal = () => {
   }
 
   useEffect(() => {
-    if (data?.workspace) {
-      form.setValue('name', data.workspace.name)
-      form.setValue('description', data.workspace.description)
+    const { unsubscribe } = getWorkspaces(handleGetWorkspaces)
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (data?.board) {
+      form.setValue('name', data.board.name)
+      form.setValue('description', data.board.description)
+      form.setValue('workspaceId', data.board.workspaceId)
     }
   }, [data, form])
 
@@ -111,10 +146,11 @@ export const EditWorkspaceModal = () => {
       <DialogContent className='p-0 overflow-hidden'>
         <DialogHeader className='pt-8 pb-13 px-6'>
           <DialogTitle className='text-2xl text-center font-bold'>
-            Edit workspace
+            Edit board
           </DialogTitle>
           <DialogDescription className='text-center text-zinc-500'>
-            Workspaces are where you store task boards.
+            A board is made up of cards ordered on lists. Use it to manage your
+            tasks, projects, and ideas.
           </DialogDescription>
         </DialogHeader>
 
@@ -136,11 +172,42 @@ export const EditWorkspaceModal = () => {
                       <Input
                         disabled={loading}
                         type='text'
-                        placeholder='Workspace name'
+                        placeholder='Board name'
                         className='dark:bg-stone-900/50 border-none'
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name='workspaceId'
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='uppercase text-sm font-bold dark:text-zinc-200'>
+                      Workspace
+                    </FormLabel>
+                    <Select
+                      disabled
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className='dark:bg-stone-900/50 border-none'>
+                          <SelectValue placeholder='select the workspace' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {workspaces.map((workspace) => (
+                          <SelectItem key={workspace.id} value={workspace.id}>
+                            {workspace.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -157,9 +224,8 @@ export const EditWorkspaceModal = () => {
                     <FormControl>
                       <Textarea
                         disabled={loading}
-                        placeholder='Workspace desciption'
+                        placeholder='Board description'
                         className='dark:bg-stone-900/50 border-none'
-                        rows={3}
                         {...field}
                       />
                     </FormControl>
@@ -168,6 +234,7 @@ export const EditWorkspaceModal = () => {
                 )}
               />
             </div>
+
             <DialogFooter className='bg-stone-900 px-6 py-4'>
               <Button
                 type='button'

@@ -1,39 +1,53 @@
 'use client'
 
-import { Hash, Edit } from 'lucide-react'
+import { Hash, Edit, Plus } from 'lucide-react'
 
-import { Workspace } from '@/types'
+import { Board, Workspace } from '@/types'
 
 import { useModal } from '@/hooks/useModal'
 
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { AcctionTooltip } from '@/components/common/ActionTooltip'
+import { SidebarSubItem } from './SidebarSubItem'
 
 interface SidebarItemProps {
   workspace: Workspace
+  boards: Board[]
 }
 
 export const SidebarItem = (props: SidebarItemProps) => {
-  const { workspace } = props
+  const { workspace, boards } = props
 
   const { onOpen } = useModal()
 
   return (
     <div>
-      <div className='flex items-center cursor-pointer group transition-colors'>
+      <div className='flex items-center cursor-pointer'>
         <Hash className='h-4 w-4 mr-2' />
         <p>{workspace.name}</p>
         <div className='flex items-center gap-1 ml-auto'>
-          <AcctionTooltip label='edit' side='top' align='center'>
+          <AcctionTooltip label='add board' side='top' align='center'>
+            <Plus
+              className='h-4 w-4 dark:hover:text-neutral-400 transition-colors'
+              onClick={() => onOpen('createBoard', { workspace })}
+            />
+          </AcctionTooltip>
+          <AcctionTooltip label='edit workspace' side='top' align='center'>
             <Edit
-              className='h-4 w-4 dark:group-hover:text-neutral-400'
+              className='h-4 w-4 dark:hover:text-neutral-400 transition-colors'
               onClick={() => onOpen('editWorkspace', { workspace })}
             />
           </AcctionTooltip>
         </div>
       </div>
       <Separator className='h-[2px] bg-neutral-700 mt-2 rounded-md' />
+      <div className='space-y-2 pt-2'>
+        {boards.map((board) => (
+          <div key={board.id}>
+            <SidebarSubItem board={board} />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

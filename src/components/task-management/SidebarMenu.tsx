@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react'
 
-import { Workspace } from '@/types'
+import { Board, Workspace, WorkspaceWithBoard } from '@/types'
 
 import { SidebarItem } from '@/components/task-management/SidebarItem'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
-import { getWorkspaces } from '@/lib/firebase/client/db'
+import { getWorkspaces, getBoards } from '@/lib/firebase/client/db'
 
 export const SidebarMenu = () => {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+  const [boards, setBoards] = useState<WorkspaceWithBoard | null>(null)
 
   const handleGetWorkspaces = (workspace: Workspace) => {
     setWorkspaces((prev) => {
@@ -27,8 +28,37 @@ export const SidebarMenu = () => {
     })
   }
 
+  const handleGetBoards = (board: Board) => {
+    setBoards((prev) => {
+      const workspaceId = board.workspaceId
+
+      if (!prev || !prev[workspaceId]) {
+        return { ...prev, [workspaceId]: [board] }
+      }
+
+      const index = prev[workspaceId].findIndex((b) => b.id === board.id)
+
+      if (index !== -1) {
+        const temp = { ...prev }
+        temp[workspaceId][index] = board
+
+        return temp
+      }
+
+      return { ...prev, [workspaceId]: [...prev[workspaceId], board] }
+    })
+  }
+
   useEffect(() => {
     const { unsubscribe } = getWorkspaces(handleGetWorkspaces)
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    const { unsubscribe } = getBoards(handleGetBoards)
 
     return () => {
       unsubscribe()
@@ -41,7 +71,12 @@ export const SidebarMenu = () => {
         <div className='space-y-5 px-4 py-2'>
           {workspaces.map((workspace) => (
             <div key={workspace.id}>
-              <SidebarItem workspace={workspace} />
+              <SidebarItem
+                workspace={workspace}
+                boards={
+                  boards && boards[workspace.id] ? boards[workspace.id] : []
+                }
+              />
             </div>
           ))}
         </div>
