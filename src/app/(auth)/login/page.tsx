@@ -4,6 +4,8 @@ import { LoginForm } from '@/components/auth/LoginForm'
 
 import { getCurrentUser } from '@/lib/firebase/server/auth'
 
+export const dynamic = 'force-dynamic'
+
 const LoginPage = async () => {
   const user = await getCurrentUser()
 
