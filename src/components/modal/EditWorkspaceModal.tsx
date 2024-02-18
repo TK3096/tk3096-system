@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import qs from 'query-string'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,7 +12,7 @@ import { APIResponse } from '@/types'
 import { useModal } from '@/hooks/useModal'
 import { useToast } from '@/hooks/useToast'
 
-import { createWorkspaceSchema } from '@/schemas/tasks-management'
+import { editWorkspaceSchema } from '@/schemas/tasks-management'
 
 import {
   Dialog,
@@ -32,30 +34,33 @@ import {
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 
-export const CreateWorkspaceModal = () => {
+export const EditWorkspaceModal = () => {
   const router = useRouter()
 
-  const { type, open, onClose } = useModal()
+  const { type, open, onClose, data } = useModal()
   const { toast } = useToast()
 
   const form = useForm({
-    resolver: zodResolver(createWorkspaceSchema),
+    resolver: zodResolver(editWorkspaceSchema),
     defaultValues: {
       name: '',
       description: '',
     },
   })
 
-  const isOpen = open && type === 'createWorkspace'
+  const isOpen = open && type === 'editWorkspace'
   const loading = form.formState.isSubmitting
   const isDirty = form.formState.isDirty
 
   const handleSubmitCreate = async (
-    values: z.infer<typeof createWorkspaceSchema>,
+    values: z.infer<typeof editWorkspaceSchema>,
   ) => {
     try {
-      const res = await fetch('/api/tasks-management/workspace', {
-        method: 'POST',
+      const url = qs.stringifyUrl({
+        url: `/api/tasks-management/workspace/${data?.workspace?.id}`,
+      })
+      const res = await fetch(url, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -67,16 +72,16 @@ export const CreateWorkspaceModal = () => {
       if (res.ok && resBody.status) {
         handleClose()
         toast({
-          title: 'Create workspace',
-          description: 'Successfully to create workspace',
+          title: 'Update workspace',
+          description: 'Successfully to update workspace',
         })
         router.refresh()
       } else {
         toast({
-          title: 'Create workspace',
+          title: 'Update workspace',
           description: !resBody.status
             ? resBody.error
-            : 'Fail to create workspace',
+            : 'Fail to update workspace',
           variant: 'destructive',
         })
       }
@@ -94,12 +99,19 @@ export const CreateWorkspaceModal = () => {
     onClose()
   }
 
+  useEffect(() => {
+    if (data?.workspace) {
+      form.setValue('name', data.workspace.name)
+      form.setValue('description', data.workspace.description)
+    }
+  }, [data, form])
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className='p-0 overflow-hidden'>
         <DialogHeader className='pt-8 pb-13 px-6'>
           <DialogTitle className='text-2xl text-center font-bold'>
-            Create a new workspace
+            Edit workspace
           </DialogTitle>
           <DialogDescription className='text-center text-zinc-500'>
             Workspaces are where you store task boards.
@@ -162,7 +174,7 @@ export const CreateWorkspaceModal = () => {
                 variant='primary'
                 disabled={loading || !isDirty}
               >
-                Create
+                Save
               </Button>
             </DialogFooter>
           </form>

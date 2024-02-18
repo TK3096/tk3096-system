@@ -41,7 +41,7 @@ export const SidebarMenu = () => {
         <div className='space-y-5 px-4 py-2'>
           {workspaces.map((workspace) => (
             <div key={workspace.id}>
-              <SidebarItem title={workspace.name} parentId={workspace.id} />
+              <SidebarItem workspace={workspace} />
             </div>
           ))}
         </div>

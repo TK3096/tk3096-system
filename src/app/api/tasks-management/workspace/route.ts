@@ -3,7 +3,7 @@ import * as z from 'zod'
 
 import { APIResponse } from '@/types'
 
-import { workspaceSchema } from '@/schemas/tasks-management'
+import { createWorkspaceSchema } from '@/schemas/tasks-management'
 
 import { getCurrentUser } from '@/lib/firebase/server/auth'
 import { addDocument } from '@/lib/firebase/server/db'
@@ -12,7 +12,7 @@ import { createTimestamp } from '@/lib/utils'
 
 export const POST = async (req: NextRequest) => {
   try {
-    const reqBody = (await req.json()) as z.infer<typeof workspaceSchema>
+    const reqBody = (await req.json()) as z.infer<typeof createWorkspaceSchema>
     const { name, description } = reqBody
     const user = await getCurrentUser()
 
