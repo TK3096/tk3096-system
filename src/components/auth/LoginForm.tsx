@@ -68,7 +68,7 @@ export const LoginForm = () => {
   }
 
   return (
-    <div className='dark:bg-[#262626] px-7 py-10 w-1/4 shadow-md rounded-lg'>
+    <div className='dark:bg-[#262626] px-7 py-10 w-[350px] shadow-md rounded-lg'>
       <h1 className='text-3xl text-center mb-3 font-bold'>TK3096 System</h1>
       <Separator className='h-[2px] w-3/4 mx-auto my-8 dark:bg-neutral-700 rounded-full' />
 

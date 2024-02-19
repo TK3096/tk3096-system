@@ -1,6 +1,19 @@
-import { Sidebar } from '@/components/main/Sidebar'
+import { redirect } from 'next/navigation'
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
+import { Sidebar } from '@/components/main/Sidebar'
+import { isUserAuthenticated } from '@/lib/firebase/server/auth'
+
+export const dynamic = 'force-dynamic'
+
+const MainLayout = async ({ children }: { children: React.ReactNode }) => {
+  const isAuth = await isUserAuthenticated()
+
+  if (!isAuth) {
+    redirect('/login')
+  }
+
+  console.log('layout')
+
   return (
     <div className='h-full'>
       <div className='hidden md:block h-full w-[80px] fixed inset-y-0 z-50'>

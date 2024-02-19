@@ -2,14 +2,14 @@ import { redirect } from 'next/navigation'
 
 import { LoginForm } from '@/components/auth/LoginForm'
 
-import { getCurrentUser } from '@/lib/firebase/server/auth'
+import { isUserAuthenticated } from '@/lib/firebase/server/auth'
 
 export const dynamic = 'force-dynamic'
 
 const LoginPage = async () => {
-  const user = await getCurrentUser()
+  const isAuth = await isUserAuthenticated()
 
-  if (user) {
+  if (isAuth) {
     redirect('/')
   }
 
