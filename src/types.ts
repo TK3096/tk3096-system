@@ -40,3 +40,8 @@ export interface Task {
   createdAt: number
   updatedAt: number
 }
+
+export interface KanbanBoardColumn {
+  id: string
+  title: string
+}

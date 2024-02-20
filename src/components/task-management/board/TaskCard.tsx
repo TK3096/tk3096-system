@@ -1,6 +1,7 @@
 'use client'
 
-import { Hash, Edit } from 'lucide-react'
+import { Hash, Edit, PlusCircle, Pencil } from 'lucide-react'
+import dayjs from 'dayjs'
 
 import { Board, Task, TaskStatus } from '@/types'
 
@@ -8,12 +9,14 @@ import { useModal } from '@/hooks/useModal'
 
 import {
   Card,
-  CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   CardDescription,
+  CardContent,
 } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { AcctionTooltip } from '@/components/common/ActionTooltip'
+import { Button } from '@/components/ui/button'
 
 import { cn } from '@/lib/utils'
 
@@ -28,52 +31,78 @@ export const TaskCard = (props: TaskCardProps) => {
   const { onOpen } = useModal()
 
   return (
-    <Card className='bg-neutral-700'>
-      <CardHeader className='px-4 pt-6'>
-        <CardTitle className='text-2xl font-bold'>
-          <div className='flex items-center'>
-            {task.name}{' '}
-            <Edit
-              className='ml-auto cursor-pointer hover:text-neutral-300 transition-colors'
-              onClick={() => onOpen('editTask', { task, board })}
-            />
+    <Card
+      className={cn(
+        'border-none p-0 overflow-hidden h-[180px] relative',
+        task.status === TaskStatus.TODO && 'bg-gray-600/50',
+        task.status === TaskStatus.IN_PROGRESS && 'bg-yellow-600',
+        task.status === TaskStatus.REVIEW && 'bg-indigo-400',
+        task.status === TaskStatus.DONE && 'bg-green-400',
+      )}
+    >
+      <CardHeader className='px-3 py-4 space-y-3'>
+        <CardTitle className='text-md font-medium'>
+          <div className='flex items-center w-full'>
+            <Hash className='w-3 h-3 mr-1' />
+            <span>{task.name}</span>
+
+            <AcctionTooltip label='edit' side='top' align='center'>
+              <Button
+                size='icon'
+                variant='ghost'
+                className={cn(
+                  'ml-auto w-5 h-5 hover:bg-transparent',
+                  task.status === TaskStatus.TODO && 'hover:text-zinc-400',
+                  task.status === TaskStatus.IN_PROGRESS &&
+                    'hover:text-yellow-300',
+                  task.status === TaskStatus.REVIEW && 'hover:text-indigo-200',
+                  task.status === TaskStatus.DONE && 'hover:text-green-200',
+                )}
+                onClick={() => onOpen('editTask', { task, board })}
+              >
+                <Edit />
+              </Button>
+            </AcctionTooltip>
           </div>
         </CardTitle>
-        <CardDescription className='text-sm'>
+        <CardDescription
+          className={cn(
+            'text-zinc-400',
+            task.status !== TaskStatus.TODO && 'text-primary/80',
+          )}
+        >
           {task.description}
         </CardDescription>
       </CardHeader>
-      <CardContent className='space-y-5'>
-        <Badge
-          className={cn(
-            'uppercase font-bold',
-            task.status === TaskStatus.TODO && 'text-indigo-600 bg-indigo-100',
-            task.status === TaskStatus.IN_PROGRESS &&
-              'text-yellow-600 bg-yellow-100',
-            task.status === TaskStatus.REVIEW && 'text-lime-600 bg-lime-100',
-            task.status === TaskStatus.DONE &&
-              'text-emerald-600 bg-emerald-100',
-          )}
-        >
-          {task.status}
-        </Badge>
-        <p>Remarks</p>
-        <div className='overflow-scroll h-[100px]'>
-          {task.remarks.length == 0 && (
-            <p className='text-sm text-zinc-200'>No remarks</p>
-          )}
-          {task.remarks.length > 0 && (
-            <ul className='bg-neutral-600 rounded-sm px-2'>
-              {task.remarks.map((remark) => (
-                <li key={remark} className='py-1 flex items-center gap-2'>
-                  <Hash className='h-3 w-3' />
-                  {remark}
-                </li>
-              ))}
-            </ul>
-          )}
+
+      <CardFooter
+        className={cn(
+          'px-3 py-3 absolute bottom-0 w-full',
+          task.status === TaskStatus.TODO && 'bg-gray-600/50',
+          task.status === TaskStatus.IN_PROGRESS && 'bg-yellow-500',
+          task.status === TaskStatus.REVIEW && 'bg-indigo-300',
+          task.status === TaskStatus.DONE && 'bg-green-300',
+        )}
+      >
+        <div className='flex justify-end items-center gap-3 w-full'>
+          <AcctionTooltip label='create at' side='top' align='center'>
+            <div className='flex items-center'>
+              <PlusCircle className='h-4 w-4 mr-1' />
+              <p className='text-sm'>
+                {dayjs.unix(task.createdAt).format('DD/MM/YYYY')}
+              </p>
+            </div>
+          </AcctionTooltip>
+          <AcctionTooltip label='updated at' side='top' align='center'>
+            <div className='flex items-center'>
+              <Pencil className='h-4 w-4 mr-1' />
+              <p className='text-sm'>
+                {dayjs.unix(task.updatedAt).format('DD/MM/YYYY')}
+              </p>
+            </div>
+          </AcctionTooltip>
         </div>
-      </CardContent>
+      </CardFooter>
     </Card>
   )
 }
