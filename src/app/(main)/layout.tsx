@@ -12,8 +12,6 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
     redirect('/login')
   }
 
-  console.log('layout')
-
   return (
     <div className='h-full'>
       <div className='hidden md:block h-full w-[80px] fixed inset-y-0 z-50'>
