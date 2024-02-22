@@ -6,6 +6,7 @@ import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
+import { Copy, Check } from 'lucide-react'
 
 import { useModal } from '@/hooks/useModal'
 import { toast } from '@/hooks/useToast'
@@ -41,12 +42,14 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { AcctionTooltip } from '../common/ActionTooltip'
 
 export const EditTaskModal = () => {
   const router = useRouter()
 
   const [boards, setBoards] = useState<Board[]>([])
   const [remarkFields, setRemarkFields] = useState<string[]>([''])
+  const [copied, setCopied] = useState<number | null>(null)
 
   const { onClose, type, open, data } = useModal()
 
@@ -131,6 +134,16 @@ export const EditTaskModal = () => {
     form.reset()
     setRemarkFields([''])
     onClose()
+  }
+
+  const handleCopy = (value: string, index: number) => {
+    setCopied(index)
+
+    navigator.clipboard.writeText(value)
+
+    setTimeout(() => {
+      setCopied(null)
+    }, 800)
   }
 
   useEffect(() => {
@@ -279,7 +292,10 @@ export const EditTaskModal = () => {
                 <ScrollArea className='h-[150px]'>
                   <div className='space-y-2'>
                     {remarkFields.map((remark, index) => (
-                      <div key={`remark-${index}`}>
+                      <div
+                        key={`remark-${index}`}
+                        className='grid grid-cols-[90%_5%] gap-1'
+                      >
                         <Input
                           disabled={loading}
                           placeholder='Task remark'
@@ -287,6 +303,26 @@ export const EditTaskModal = () => {
                           value={remark}
                           onChange={(e) => handleChangeRemarkField(e, index)}
                         />
+                        {remark && (
+                          <AcctionTooltip
+                            label='copy'
+                            side='left'
+                            align='center'
+                          >
+                            <Button
+                              type='button'
+                              size='icon'
+                              variant='outline'
+                              className='border-none'
+                              onClick={() => handleCopy(remark, index)}
+                            >
+                              {copied === index && (
+                                <Check className='w-4 h-4' />
+                              )}
+                              {copied !== index && <Copy className='w-4 h-4' />}
+                            </Button>
+                          </AcctionTooltip>
+                        )}
                       </div>
                     ))}
                   </div>
