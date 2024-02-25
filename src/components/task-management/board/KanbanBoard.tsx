@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 import { Board, KanbanBoardColumn, Task, TaskStatus } from '@/types'
 
@@ -37,6 +37,15 @@ export const KanbanBoard = (props: KanbanBoardProps) => {
 
   const [tasks, setTasks] = useState<Task[]>([])
 
+  const sortTasks = useCallback(
+    (colId: string) => {
+      return tasks
+        .filter((task) => task.status === colId)
+        .sort((a, b) => a.createdAt - b.createdAt)
+    },
+    [tasks],
+  )
+
   useEffect(() => {
     const { unsubscribe } = getTasks((value: Task) => {
       if (value.boardId === board.id) {
@@ -66,7 +75,7 @@ export const KanbanBoard = (props: KanbanBoardProps) => {
           <BoardColumn
             key={col.id}
             column={col}
-            tasks={tasks.filter((task) => task.status === col.id)}
+            tasks={sortTasks(col.id)}
             board={board}
           />
         ))}

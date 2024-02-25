@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 
 import { Board, Workspace, WorkspaceWithBoard } from '@/types'
 
@@ -12,6 +12,20 @@ import { getWorkspaces, getBoards } from '@/lib/firebase/client/db'
 export const SidebarMenu = () => {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [boards, setBoards] = useState<WorkspaceWithBoard | null>(null)
+
+  const sortedWorkspaces = useMemo(() => {
+    const sorted = [...workspaces]
+    return sorted.sort((a, b) => a.createdAt - b.createdAt)
+  }, [workspaces])
+
+  const sortBoards = useCallback(
+    (workspaceId: string) => {
+      if (!boards || !boards[workspaceId]) return []
+
+      return boards[workspaceId].sort((a, b) => a.createdAt - b.createdAt)
+    },
+    [boards],
+  )
 
   const handleGetWorkspaces = (workspace: Workspace) => {
     setWorkspaces((prev) => {
@@ -69,12 +83,12 @@ export const SidebarMenu = () => {
     <div className='flex flex-col h-full'>
       <ScrollArea className='flex-1 w-full'>
         <div className='space-y-5 px-4 py-2'>
-          {workspaces.map((workspace) => (
+          {sortedWorkspaces.map((workspace) => (
             <div key={workspace.id}>
               <SidebarItem
                 workspace={workspace}
                 boards={
-                  boards && boards[workspace.id] ? boards[workspace.id] : []
+                  boards && boards[workspace.id] ? sortBoards(workspace.id) : []
                 }
               />
             </div>
