@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { LayoutList } from 'lucide-react'
+import { LayoutList, Palette } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { SidebarItem } from '@/components/main/SidebarItem'
@@ -11,6 +11,11 @@ const MENUS = [
     title: 'Tasks Management',
     path: '/tasks-management',
     Icon: LayoutList,
+  },
+  {
+    title: 'Palettes',
+    path: '/palettes',
+    Icon: Palette,
   },
 ]
 
