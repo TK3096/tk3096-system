@@ -35,7 +35,11 @@ export const SidebarSubItem = (props: SidebarSubItemProps) => {
       className='pl-4 py-1 cursor-pointer flex dark:bg-stone-700/50 rounded-md dark:hover:bg-stone-700/30 transition-colors'
       onClick={handleClick}
     >
-      <p className='text-sm'>{board.name}</p>
+      <div className='text-[140px]'>
+        <p className='text-sm text-nowrap text-ellipsis overflow-hidden'>
+          {board.name}
+        </p>
+      </div>
       <div className='ml-auto flex gap-1'>
         <AcctionTooltip label='edit board' side='top' align='center'>
           <Edit className='h-4 w-4' onClick={handleEdit} />
