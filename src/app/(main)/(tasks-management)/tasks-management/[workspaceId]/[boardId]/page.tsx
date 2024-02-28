@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation'
 
 import { Board, Workspace } from '@/types'
 
+import { useTasksManagement } from '@/hooks/useTasksManagement'
+
 import { ContentHeader } from '@/components/task-management/ContentHeader'
 import { getBoards, getWorkspaces } from '@/lib/firebase/client/db'
 import { KanbanBoard } from '@/components/task-management/board/KanbanBoard'
@@ -13,32 +15,17 @@ const BoardPage = () => {
   const params = useParams()
   const { workspaceId, boardId } = params
 
-  const [workspace, setWorkspace] = useState<Workspace | null>(null)
-  const [board, setBoard] = useState<Board | null>(null)
+  const { boards, workspaces } = useTasksManagement()
 
-  useEffect(() => {
-    const { unsubscribe } = getWorkspaces((value: Workspace) => {
-      if (workspaceId === value.id) {
-        setWorkspace(value)
-      }
-    })
+  const workspace = workspaces.find((w: Workspace) => w.id === workspaceId)
 
-    return () => {
-      unsubscribe()
-    }
-  }, [workspaceId])
+  if (!workspace) {
+    return null
+  }
 
-  useEffect(() => {
-    const { unsubscribe } = getBoards((value: Board) => {
-      if (boardId === value.id) {
-        setBoard(value)
-      }
-    })
-
-    return () => {
-      unsubscribe()
-    }
-  }, [boardId])
+  const board = boards[workspaceId as string].find(
+    (b: Board) => b.id === boardId,
+  )
 
   if (!workspace || !board) {
     return null

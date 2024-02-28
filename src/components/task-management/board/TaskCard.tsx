@@ -67,14 +67,16 @@ export const TaskCard = (props: TaskCardProps) => {
             </AcctionTooltip>
           </div>
         </CardTitle>
-        <CardDescription
-          className={cn(
-            'text-zinc-400',
-            task.status !== TaskStatus.TODO && 'text-primary/80',
-          )}
-        >
-          {task.description}
-        </CardDescription>
+        <div className='h-[80px] overflow-y-scroll'>
+          <CardDescription
+            className={cn(
+              'text-zinc-400',
+              task.status !== TaskStatus.TODO && 'text-primary/80',
+            )}
+          >
+            {task.description}
+          </CardDescription>
+        </div>
       </CardHeader>
 
       <CardFooter

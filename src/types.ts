@@ -6,6 +6,10 @@ export interface WorkspaceWithBoard {
   [key: string]: Board[]
 }
 
+export interface BoardWithTask {
+  [key: string]: Task[]
+}
+
 export interface Workspace {
   id: string
   name: string
