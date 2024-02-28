@@ -1,13 +1,11 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { Board, KanbanBoardColumn, TaskStatus } from '@/types'
 
-import { Board, KanbanBoardColumn, Task, TaskStatus } from '@/types'
+import { useTasksManagement } from '@/hooks/useTasksManagement'
 
 import { BoardContainer } from '@/components/task-management/board/BoardContainer'
 import { BoardColumn } from '@/components/task-management/board/BoardColumn'
-
-import { getTasks } from '@/lib/firebase/client/db'
 
 interface KanbanBoardProps {
   board: Board
@@ -35,38 +33,7 @@ const COLUMNS: KanbanBoardColumn[] = [
 export const KanbanBoard = (props: KanbanBoardProps) => {
   const { board } = props
 
-  const [tasks, setTasks] = useState<Task[]>([])
-
-  const sortTasks = useCallback(
-    (colId: string) => {
-      return tasks
-        .filter((task) => task.status === colId)
-        .sort((a, b) => a.createdAt - b.createdAt)
-    },
-    [tasks],
-  )
-
-  useEffect(() => {
-    const { unsubscribe } = getTasks((value: Task) => {
-      if (value.boardId === board.id) {
-        setTasks((prev) => {
-          const index = prev.findIndex((task) => task.id === value.id)
-
-          if (index !== -1) {
-            const newTasks = [...prev]
-            newTasks[index] = value
-            return newTasks
-          }
-
-          return [...prev, value]
-        })
-      }
-    })
-
-    return () => {
-      unsubscribe()
-    }
-  }, [board])
+  const { tasks } = useTasksManagement()
 
   return (
     <div>
@@ -75,7 +42,11 @@ export const KanbanBoard = (props: KanbanBoardProps) => {
           <BoardColumn
             key={col.id}
             column={col}
-            tasks={sortTasks(col.id)}
+            tasks={
+              tasks && tasks[board.id]
+                ? tasks[board.id].filter((task) => task.status === col.id)
+                : []
+            }
             board={board}
           />
         ))}

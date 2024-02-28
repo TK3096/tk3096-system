@@ -24,7 +24,11 @@ export const SidebarItem = (props: SidebarItemProps) => {
     <div>
       <div className='flex items-center cursor-pointer'>
         <Hash className='h-4 w-4 mr-2' />
-        <p>{workspace.name}</p>
+        <div className='w-[150px]'>
+          <p className='text-nowrap text-ellipsis overflow-hidden'>
+            {workspace.name}
+          </p>
+        </div>
         <div className='flex items-center gap-1 ml-auto'>
           <AcctionTooltip label='add board' side='top' align='center'>
             <Plus

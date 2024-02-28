@@ -44,7 +44,9 @@ export const TaskCard = (props: TaskCardProps) => {
         <CardTitle className='text-md font-medium'>
           <div className='flex items-center w-full'>
             <Hash className='w-3 h-3 mr-1' />
-            <span>{task.name}</span>
+            <div className='overflow-x-scroll w-[270px]'>
+              <p className='text-nowrap'>{task.name}</p>
+            </div>
 
             <AcctionTooltip label='edit' side='top' align='center'>
               <Button
@@ -65,14 +67,16 @@ export const TaskCard = (props: TaskCardProps) => {
             </AcctionTooltip>
           </div>
         </CardTitle>
-        <CardDescription
-          className={cn(
-            'text-zinc-400',
-            task.status !== TaskStatus.TODO && 'text-primary/80',
-          )}
-        >
-          {task.description}
-        </CardDescription>
+        <div className='h-[80px] overflow-y-scroll'>
+          <CardDescription
+            className={cn(
+              'text-zinc-400',
+              task.status !== TaskStatus.TODO && 'text-primary/80',
+            )}
+          >
+            {task.description}
+          </CardDescription>
+        </div>
       </CardHeader>
 
       <CardFooter

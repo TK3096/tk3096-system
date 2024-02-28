@@ -15,10 +15,10 @@ export const BoardColumn = (props: BoardColumnProps) => {
   const { column, tasks, board } = props
 
   return (
-    <Card className='w-96 border-none shadow-xl'>
+    <Card className='w-96 border-none shadow-xl dark:bg-neutral-700'>
       <CardHeader className='px-4 py-6 space-y-4'>
         <CardTitle className='text-center font-bold'>{column.title}</CardTitle>
-        <Separator className='h-[2px] dark:bg-neutral-700 w-[90%] mx-auto' />
+        <Separator className='h-[2px] dark:bg-neutral-600 w-[90%] mx-auto' />
       </CardHeader>
       <ScrollArea className='h-[790px]'>
         <CardContent className='flex flex-col gap-4 px-4'>
